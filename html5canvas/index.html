@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>HTML5 Canvas</title>
+</head>
+<body>
+<canvas id="draw" width="800" height="800"></canvas>
+<script>
+//grapping the html canvas element
+const canvas = document.querySelector('#draw');
+//to draw on
+const ctx = canvas.getContext('2d');
+
+//size canvas to canvas id window
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+//color style
+ctx.strokeStyle = '#BADASS';
+//end of painted line is rounded off
+ctx.lineJoin = 'round';
+ctx.lineCap = 'round';
+ctx.lineWidth = 100;
+ctx.globalCompsiteOperation = 'multiply';
+//only draws when cursor is down
+let isDrawing = false;
+//create variables for axis coor for start and stop
+let lastX = 0;
+let lastY = 0;
+let hue = 0;
+let direction = true;
+//function to be called when drawing, click and drag
+var draw = (e) => {
+  if(!isDrawing) {
+    return null;
+  }
+  // console.log(e);
+  ctx.strokeStyle = `hsl(${hue}, 100%, 50%)`;
+  ctx.lineWidth = hue;
+  ctx.beginPath();
+  //starting
+  ctx.moveTo(lastX, lastY);
+  //go to
+  ctx.lineTo(e.offsetX, e.offsetY);
+  ctx.stroke();
+  lastX = e.offsetX;
+  lastY = e.offsetY;
+  //increment hue until end of color spectrum then restart
+  hue++;
+  if(hue >= 360) {
+    hue = 0;
+  }
+  //go to full line width in drawing the decrement when at 100
+  if(ctx.lineWidth >= 100 || ctx.lineWidth <= 1) {
+    direction = !direction;
+  }
+  if(direction) {
+    ctx.lineWidth++;
+  }
+  else {
+    ctx.lineWidth--;
+  }
+}
+//listen event of mouse on canvas
+canvas.addEventListener('mousedown', (e) => {
+  //flag to test if cursor is down
+  isDrawing = true;
+  lastX = e.offsetX;
+  lastY = e.offsetY;
+});
+canvas.addEventListener('mousemove', draw);
+canvas.addEventListener('mouseup', () => isDrawing = false);
+canvas.addEventListener('mouseout', () => isDrawing = false);
+
+
+</script>
+
+<style>
+  html, body {
+    margin:0;
+  }
+</style>
+
+</body>
+</html>
